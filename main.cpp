@@ -14,6 +14,7 @@ struct point
     int x, y, hspeed;
 };
 
+// Entity Class inherited from Sprite
 class Entity : public Sprite
 {
 public:
@@ -23,6 +24,7 @@ public:
     Vector2f position;
 
 public:
+    // Constructor
     Entity(Texture &texture, float speed)
     {
         setTexture(texture);
@@ -31,7 +33,7 @@ public:
         escape = false;
     }
 
-    virtual ~Entity() {}
+    virtual ~Entity() {} // Destructor
 };
 
 class Shuriken : public Entity
@@ -74,9 +76,9 @@ public:
 
 int main()
 {
-    srand(time(nullptr));
+    srand(time(nullptr)); // Random seed
 
-    RenderWindow window(VideoMode(400, 533), "TURTLE JUMP");
+    RenderWindow window(VideoMode(WINDOWX, WINDOWY), "TURTLE JUMP");
     window.setFramerateLimit(60);
 
     // Load Font
@@ -104,8 +106,9 @@ int main()
     t4.loadFromFile("images/shuriken.png");
     t5.loadFromFile("images/pizza.png");
 
-
     Sprite sBackground(t1), sPlatform(t2), sCharacter(t3); // Create sprites
+    float scale = 0.5;
+    sCharacter.setScale(scale, scale);
 
     // Create shurikens and pizzas
     int total = 1;
@@ -114,7 +117,7 @@ int main()
     for(int i = 0; i < total; i++)
     {
         Shuriken shuriken(t4, 2);
-        shuriken.position.x = (rand()%400) - shuriken.getGlobalBounds().width;
+        shuriken.position.x = (rand()%400) - shuriken.getGlobalBounds().width; // Set random X coordinate
         shuriken.setPosition(shuriken.position.x, 0-shuriken.getGlobalBounds().height);
         shurikens.emplace_back(shuriken);
 
@@ -268,14 +271,14 @@ int main()
         if ((Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) && bounds.left + bounds.width/2 < 400.0)
         {
             // Change direction of character texture
-            sCharacter.setScale(-1, 1);
+            sCharacter.setScale(-scale, scale);
             flip = true;
-            x+=3;
+            x+=3; // Horizontal Speed of the character
         }
         if ((Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) && bounds.left + bounds.width/2 > 0.0)
         {
             // Change direction of character texture
-            sCharacter.setScale(1, 1);
+            sCharacter.setScale(scale, scale);
             flip = false;
             x-=3;
         }
@@ -314,6 +317,7 @@ int main()
             }
         }
 
+        // Collision Detection
         for (int i=0; i<platformnum; i++) // Iterate through current platforms
         {
             // Collision of character with platform
@@ -325,7 +329,7 @@ int main()
             }
         }
 
-        // Platform bouncing off
+        // Platform bouncing off of sides
         for (int i=0; i<platformnum; i++) // Iterate through current platforms
         {
             platforms[i].x += platforms[i].hspeed; // Move platform
